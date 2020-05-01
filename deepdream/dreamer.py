@@ -40,8 +40,9 @@ faces), while earlier layers respond to simpler features (such as edges, shapes,
 Feel free to experiment with the layers selected below, but keep in mind that deeper layers 
 (those with a higher index) will take longer to train on since the gradient computation is deeper.
 """
-names = ['mixed1', 'mixed1']
-
+names = ['mixed2', 'mixed2']
+max_image_dimension = 700
+test_layers = True
 
 # SOURCE IMAGE LOAD
 # Download an image and read it into a NumPy array.
@@ -66,17 +67,11 @@ def show(img):
 
 
 # Downsizing the image makes it easier to work with.
-source_img = download(url, max_dim=500)
+source_img = download(url, max_dim=max_image_dimension)
 
 # PREPARE FEATURE EXTRACTION MODEL
 # Download and prepare a pre-trained image classification model.
 base_model = tf.keras.applications.InceptionV3(include_top=False, weights='imagenet')
-
-# Create the feature extraction model
-layers = [base_model.get_layer(name).output for name in names]
-dream_model = tf.keras.Model(inputs=base_model.input, outputs=layers)
-
-deepdream = DeepDream(dream_model)
 
 # MAIN LOOP
 def run_deep_dream_simple(img, steps=100, step_size=0.01):
@@ -107,8 +102,19 @@ def run_deep_dream_simple(img, steps=100, step_size=0.01):
 
   return result
 
-
-dream_img = run_deep_dream_simple(img=source_img, steps=100, step_size=0.01)
+# Create the feature extraction model & dream
+if test_layers:
+  for x in range(0, 10):
+    names = ['mixed' + str(x), 'mixed' + str(x)]
+    layers = [base_model.get_layer(name).output for name in names]
+    dream_model = tf.keras.Model(inputs=base_model.input, outputs=layers)
+    deepdream = DeepDream(dream_model)
+    dream_img = run_deep_dream_simple(img=source_img, steps=100, step_size=0.01)
+else:
+  layers = [base_model.get_layer(name).output for name in names]
+  dream_model = tf.keras.Model(inputs=base_model.input, outputs=layers)
+  deepdream = DeepDream(dream_model)
+  dream_img = run_deep_dream_simple(img=source_img, steps=100, step_size=0.01)
 
 # ----
 print('fin.')
