@@ -40,15 +40,13 @@ def deprocess(img):
 # Display an image
 def show(img):
   display.display(PIL.Image.fromarray(np.array(img)))
-  stamp = int(time.time())
+  stamp = '-'.join(names) + '-' + str(int(time.time()))
   filename = "renders/%s.png" % stamp
   PIL.Image.fromarray(np.array(img)).save(filename)
 
 
 # Downsizing the image makes it easier to work with.
-original_img = download(url, max_dim=500)
-show(original_img)
-display.display(display.HTML('Image cc-by: <a "href=https://commons.wikimedia.org/wiki/File:Felis_catus-cat_on_snow.jpg">Von.grzanka</a>'))
+source_img = download(url, max_dim=500)
 
 # PREPARE FEATURE EXTRACTION MODEL
 # Download and prepare a pre-trained image classification model.
@@ -149,7 +147,7 @@ def run_deep_dream_simple(img, steps=100, step_size=0.01):
   return result
 
 
-dream_img = run_deep_dream_simple(img=original_img, steps=100, step_size=0.01)
+dream_img = run_deep_dream_simple(img=source_img, steps=100, step_size=0.01)
 
 # ----
 print('ends.')
