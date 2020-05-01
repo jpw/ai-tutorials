@@ -1,4 +1,6 @@
-#@title Licensed under the Apache License, Version 2.0 (the "License");
+#!/usr/bin/env python3
+
+# #@title Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -39,7 +41,6 @@ def deprocess(img):
 
 # Display an image
 def show(img):
-  display.display(PIL.Image.fromarray(np.array(img)))
   stamp = '-'.join(names) + '-' + str(int(time.time()))
   filename = "renders/%s.png" % stamp
   PIL.Image.fromarray(np.array(img)).save(filename)
@@ -57,9 +58,17 @@ The idea in DeepDream is to choose a layer (or layers) and maximize the "loss" i
 increasingly "excites" the layers. The complexity of the features incorporated depends on layers chosen 
 by you, i.e, lower layers produce strokes or simple patterns, while deeper layers give sophisticated 
 features in images, or even whole objects.
+
+The InceptionV3 architecture is quite large (for a graph of the model architecture see TensorFlow's 
+research repo). For DeepDream, the layers of interest are those where the convolutions are concatenated. 
+There are 11 of these layers in InceptionV3, named 'mixed0' though 'mixed10'. Using different layers will 
+result in different dream-like images. Deeper layers respond to higher-level features (such as eyes and 
+faces), while earlier layers respond to simpler features (such as edges, shapes, and textures). 
+Feel free to experiment with the layers selected below, but keep in mind that deeper layers 
+(those with a higher index) will take longer to train on since the gradient computation is deeper.
 """
 # Maximize the activations of these layers
-names = ['mixed3', 'mixed5']
+names = ['mixed0', 'mixed3']
 layers = [base_model.get_layer(name).output for name in names]
 
 # Create the feature extraction model
@@ -150,4 +159,4 @@ def run_deep_dream_simple(img, steps=100, step_size=0.01):
 dream_img = run_deep_dream_simple(img=source_img, steps=100, step_size=0.01)
 
 # ----
-print('ends.')
+print('fin.')
