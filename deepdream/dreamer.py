@@ -63,7 +63,7 @@ def deprocess(img):
 
 # Display an image
 def show(img):
-  stamp = '-'.join(names) + '-' + str(int(time.time()))
+  stamp = str(int(time.time())) + '_' + ('-'.join(names)) 
   filename = "renders/%s.png" % stamp
   PIL.Image.fromarray(np.array(img)).save(filename)
 
