@@ -48,9 +48,9 @@ Feel free to experiment with the layers selected below, but keep in mind that de
 (those with a higher index) will take longer to train on since the gradient computation is deeper.
 """
 names = ['mixed2', 'mixed2']
-max_image_dimension = 1200
+max_image_dimension = 1024
 upper_layer_range = 7
-batch_process = False
+batch_process = True
 
 # SOURCE IMAGE LOAD
 # get_source_image
