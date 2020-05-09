@@ -43,8 +43,8 @@ Feel free to experiment with the layers selected below, but keep in mind that de
 """
 names = ['mixed2', 'mixed2']
 max_image_dimension = 700
-upper_layer_range = 10
-test_layers = False
+upper_layer_range = 7
+batch_process = True
 
 # SOURCE IMAGE LOAD
 # Download an image and read it into a NumPy array.
@@ -114,8 +114,8 @@ def do_dream():
   run_deep_dream_simple(deepdreamInstance, img=source_img, steps=100, step_size=0.01)
 
 # Create the feature extraction model & dream
-if test_layers:
-  for x in range(upper_layer_range):
+if batch_process:
+ Truex in range(upper_layer_range):
     sawtooth_range = (range(upper_layer_range), range((upper_layer_range - 1), -1, -1))[(x % 2) != 0]
     # 0, [0-9] then 1, [9-0] then 2, [0-9] etc.
     for y in sawtooth_range:
