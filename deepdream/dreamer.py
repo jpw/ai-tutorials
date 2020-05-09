@@ -115,7 +115,7 @@ def do_dream():
 
 # Create the feature extraction model & dream
 if batch_process:
- Truex in range(upper_layer_range):
+  for x in range(upper_layer_range):
     sawtooth_range = (range(upper_layer_range), range((upper_layer_range - 1), -1, -1))[(x % 2) != 0]
     # 0, [0-9] then 1, [9-0] then 2, [0-9] etc.
     for y in sawtooth_range:
