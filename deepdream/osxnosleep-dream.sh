@@ -1,0 +1,2 @@
+./dreamer.py &
+caffeinate -smid
