@@ -15,6 +15,7 @@
 # https://github.com/tensorflow/docs/blob/master/site/en/tutorials/generative/deepdream.ipynb
 
 import time
+
 import tensorflow as tf
 import numpy as np
 import matplotlib as mpl
@@ -42,6 +43,7 @@ Feel free to experiment with the layers selected below, but keep in mind that de
 """
 names = ['mixed2', 'mixed2']
 max_image_dimension = 700
+upper_layer_range = 10
 test_layers = False
 
 # SOURCE IMAGE LOAD
@@ -74,7 +76,7 @@ source_img = download(url, max_dim=max_image_dimension)
 base_model = tf.keras.applications.InceptionV3(include_top=False, weights='imagenet')
 
 # MAIN LOOP
-def run_deep_dream_simple(img, steps=100, step_size=0.01):
+def run_deep_dream_simple(deepdreamInstance, img, steps=100, step_size=0.01):
   # Convert from uint8 to the range expected by the model.
   img = tf.keras.applications.inception_v3.preprocess_input(img)
   img = tf.convert_to_tensor(img)
@@ -89,7 +91,7 @@ def run_deep_dream_simple(img, steps=100, step_size=0.01):
     steps_remaining -= run_steps
     step += run_steps
 
-    loss, img = deepdream(img, run_steps, tf.constant(step_size))
+    loss, img = deepdreamInstance(img, run_steps, tf.constant(step_size))
     
     display.clear_output(wait=True)
     show(deprocess(img))
@@ -102,20 +104,26 @@ def run_deep_dream_simple(img, steps=100, step_size=0.01):
 
   return result
 
-# Create the feature extraction model & dream
-if test_layers:
-  for x in range(0, 10):
-    for y in range(0, 10):
-      names = ['mixed' + str(x), 'mixed' + str(y)]
-      layers = [base_model.get_layer(name).output for name in names]
-      dream_model = tf.keras.Model(inputs=base_model.input, outputs=layers)
-      deepdream = DeepDream(dream_model)
-      dream_img = run_deep_dream_simple(img=source_img, steps=100, step_size=0.01)
-else:
+def get_instance_for_model(model):
+  return DeepDream(model)
+
+def do_dream():
   layers = [base_model.get_layer(name).output for name in names]
   dream_model = tf.keras.Model(inputs=base_model.input, outputs=layers)
-  deepdream = DeepDream(dream_model)
-  dream_img = run_deep_dream_simple(img=source_img, steps=100, step_size=0.01)
+  deepdreamInstance = get_instance_for_model(dream_model)
+  run_deep_dream_simple(deepdreamInstance, img=source_img, steps=100, step_size=0.01)
+
+# Create the feature extraction model & dream
+if test_layers:
+  for x in range(upper_layer_range):
+    sawtooth_range = (range(upper_layer_range), range((upper_layer_range - 1), -1, -1))[(x % 2) != 0]
+    # 0, [0-9] then 1, [9-0] then 2, [0-9] etc.
+    for y in sawtooth_range:
+      names = ['mixed' + str(x), 'mixed' + str(y)]
+      do_dream()
+
+else:
+  do_dream()
 
 # ----
 print('fin.')
