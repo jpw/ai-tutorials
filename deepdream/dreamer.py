@@ -25,7 +25,13 @@ from tensorflow.keras.preprocessing import image
 
 from deepdream import DeepDream
 
-url = 'https://storage.googleapis.com/download.tensorflow.org/example_images/YellowLabradorLooking_new.jpg'
+# source_image can be a URL or local path
+# some HTTPS URLs work, some HTTPS URLs don't, but he error is always:
+#  urllib.error.URLError: <urlopen error unknown url type: https>
+#  ...which could be more helpful.
+#source_image = 'https://i2-prod.manchestereveningnews.co.uk/incoming/article10673597.ece/ALTERNATES/s1200b/JS79535762.jpg'
+#source_image = 'https://storage.googleapis.com/download.tensorflow.org/example_images/YellowLabradorLooking_new.jpg'
+source_image = '/Users/jon/Downloads/JS79535762.jpg'
 
 """
 The idea in DeepDream is to choose a layer (or layers) and maximize the "loss" in a way that the image 
@@ -42,15 +48,20 @@ Feel free to experiment with the layers selected below, but keep in mind that de
 (those with a higher index) will take longer to train on since the gradient computation is deeper.
 """
 names = ['mixed2', 'mixed2']
-max_image_dimension = 700
+max_image_dimension = 1200
 upper_layer_range = 7
-batch_process = True
+batch_process = False
 
 # SOURCE IMAGE LOAD
-# Download an image and read it into a NumPy array.
-def download(url, max_dim=None):
-  name = url.split('/')[-1]
-  image_path = tf.keras.utils.get_file(name, origin=url)
+# get_source_image
+#  an image and read it into a NumPy array.
+def get_source_image(url_or_path, max_dim=None):
+  if url_or_path.startswith('http'):
+    name = url_or_path.split('/')[-1]
+    image_path = tf.keras.utils.get_file(name, origin=url_or_path)
+  else:
+    image_path = url_or_path
+
   img = PIL.Image.open(image_path)
   if max_dim:
     img.thumbnail((max_dim, max_dim))
@@ -69,7 +80,7 @@ def show(img):
 
 
 # Downsizing the image makes it easier to work with.
-source_img = download(url, max_dim=max_image_dimension)
+source_img = get_source_image(source_image, max_dim=max_image_dimension)
 
 # PREPARE FEATURE EXTRACTION MODEL
 # Download and prepare a pre-trained image classification model.
