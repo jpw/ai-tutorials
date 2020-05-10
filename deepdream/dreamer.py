@@ -72,10 +72,10 @@ def deprocess(img):
   img = 255*(img + 1.0)/2.0
   return tf.cast(img, tf.uint8)
 
-# Display an image
-def show(img):
+def save_image_to_disk(img):
   stamp = str(int(time.time())) + '_' + ('-'.join(names)) 
   filename = "renders/%s.png" % stamp
+  print("written " + filename)
   PIL.Image.fromarray(np.array(img)).save(filename)
 
 
@@ -105,13 +105,14 @@ def run_deep_dream_simple(deepdreamInstance, img, steps=100, step_size=0.01):
     loss, img = deepdreamInstance(img, run_steps, tf.constant(step_size))
     
     display.clear_output(wait=True)
-    show(deprocess(img))
+    save_image_to_disk(deprocess(img))
     print ("Step {}, loss {}".format(step, loss))
 
 
   result = deprocess(img)
   display.clear_output(wait=True)
-  show(result)
+  # why is this year
+  save_image_to_disk(result)
 
   return result
 
