@@ -126,9 +126,9 @@ def do_dream():
 
 # Create the feature extraction model & dream
 if batch_process:
-  for x in range(upper_layer_range):
-    sawtooth_range = (range(upper_layer_range), range((upper_layer_range - 1), -1, -1))[(x % 2) != 0]
-    # 0, [0-9] then 1, [9-0] then 2, [0-9] etc.
+  for x in range((upper_layer_range - 1), -1, -1):
+    sawtooth_range = (range((upper_layer_range - 1), -1, -1), range(upper_layer_range))[(x % 2) != 0]
+    # 9, [9-0] then 8, [0-9] then 7, [9-0] etc.
     for y in sawtooth_range:
       names = ['mixed' + str(x), 'mixed' + str(y)]
       do_dream()
